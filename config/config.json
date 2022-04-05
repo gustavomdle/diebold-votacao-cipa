@@ -9,11 +9,29 @@
           "manifest": "./src/webparts/votacaoCipaVotar/VotacaoCipaVotarWebPart.manifest.json"
         }
       ]
+    },
+    "votacao-cipa-resultado-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/votacaoCipaResultado/VotacaoCipaResultadoWebPart.js",
+          "manifest": "./src/webparts/votacaoCipaResultado/VotacaoCipaResultadoWebPart.manifest.json"
+        }
+      ]
+    },
+    "votacao-cipa-auditoria-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/votacaoCipaAuditoria/VotacaoCipaAuditoriaWebPart.js",
+          "manifest": "./src/webparts/votacaoCipaAuditoria/VotacaoCipaAuditoriaWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
     "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
-    "VotacaoCipaVotarWebPartStrings": "lib/webparts/votacaoCipaVotar/loc/{locale}.js"
+    "VotacaoCipaVotarWebPartStrings": "lib/webparts/votacaoCipaVotar/loc/{locale}.js",
+    "VotacaoCipaResultadoWebPartStrings": "lib/webparts/votacaoCipaResultado/loc/{locale}.js",
+    "VotacaoCipaAuditoriaWebPartStrings": "lib/webparts/votacaoCipaAuditoria/loc/{locale}.js"
   }
 }

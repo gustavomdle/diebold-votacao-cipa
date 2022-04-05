@@ -7,32 +7,21 @@ import {
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
-import * as strings from 'VotacaoCipaVotarWebPartStrings';
-import VotacaoCipaVotar from './components/VotacaoCipaVotar';
-import { IVotacaoCipaVotarProps } from './components/IVotacaoCipaVotarProps';
-import { Web } from 'sp-pnp-js';
+import * as strings from 'VotacaoCipaResultadoWebPartStrings';
+import VotacaoCipaResultado from './components/VotacaoCipaResultado';
+import { IVotacaoCipaResultadoProps } from './components/IVotacaoCipaResultadoProps';
 
-var _guidFuncionarios;
-
-export interface IVotacaoCipaVotarWebPartProps {
+export interface IVotacaoCipaResultadoWebPartProps {
   description: string;
-  listId: string;
-  
 }
 
-export default class VotacaoCipaVotarWebPart extends BaseClientSideWebPart<IVotacaoCipaVotarWebPartProps> {
-  
+export default class VotacaoCipaResultadoWebPart extends BaseClientSideWebPart<IVotacaoCipaResultadoWebPartProps> {
 
   public render(): void {
-
-    const element: React.ReactElement<IVotacaoCipaVotarProps> = React.createElement(
-      VotacaoCipaVotar,
+    const element: React.ReactElement<IVotacaoCipaResultadoProps> = React.createElement(
+      VotacaoCipaResultado,
       {
-        description: this.properties.description,
-        siteurl: this.context.pageContext.web.absoluteUrl,
-        context: this.context,
-        listId: this.properties.listId, 
-
+        description: this.properties.description
       }
     );
 
@@ -58,8 +47,8 @@ export default class VotacaoCipaVotarWebPart extends BaseClientSideWebPart<IVota
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('listId', {
-                  label: strings.ListIdFieldLabel
+                PropertyPaneTextField('description', {
+                  label: strings.DescriptionFieldLabel
                 })
               ]
             }
