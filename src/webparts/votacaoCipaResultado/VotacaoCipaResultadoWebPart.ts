@@ -21,7 +21,9 @@ export default class VotacaoCipaResultadoWebPart extends BaseClientSideWebPart<I
     const element: React.ReactElement<IVotacaoCipaResultadoProps> = React.createElement(
       VotacaoCipaResultado,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        siteurl: this.context.pageContext.web.absoluteUrl,
+        context: this.context,
       }
     );
 

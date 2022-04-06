@@ -499,7 +499,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
   }
 
-
   private redirecionarPaginaVoto() {
     window.location.href = 'votar.aspx';
     //window.location.replace("votar.aspx");
@@ -513,7 +512,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
   private getCandidatos() {
 
     jQuery.ajax({
-      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Candidatos')/items?$select=ID,Title,Setor,Foto`,
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Candidatos')/items?$select=ID,Title,Setor,Foto&$filter=Ano eq '${_anoVotacao}`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -547,7 +546,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
 
   }
-
 
   private preencheInformacoesConfirmacao(opcao) {
 
@@ -645,7 +643,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
   }
 
-
   private ckConfirmar() {
 
     if (jQuery('input[id="ckConfirmar"]:checked').val()) {
@@ -659,7 +656,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
     }
 
   }
-
 
   private onSelectedItem(data: { key: string; name: string }[]) {
     for (const item of data) {
