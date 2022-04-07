@@ -22,9 +22,10 @@ export default class VotacaoCipaAuditoria extends React.Component<IVotacaoCipaAu
 
   public async componentDidMount() {
 
+
     document
-    .getElementById("dllAno")
-    .addEventListener("change", (e: Event) => this.montaResultado());
+      .getElementById("dllAno")
+      .addEventListener("change", (e: Event) => this.montaResultado());
 
 
     _url = this.props.siteurl;
@@ -132,12 +133,15 @@ export default class VotacaoCipaAuditoria extends React.Component<IVotacaoCipaAu
 
                 jQuery("#divResultados").append(montaTabelaMeio);
 
+                jQuery("#divCarregando").css("display", "none");
+                jQuery("#divConteudo").css("display", "block");
+
               },
               error: function (jqXHR, textStatus, errorThrown) {
               }
             });
 
-         }
+          }
 
         } else {
           alert("Nenhum funcionário encontrado!");
@@ -197,35 +201,41 @@ export default class VotacaoCipaAuditoria extends React.Component<IVotacaoCipaAu
   public render(): React.ReactElement<IVotacaoCipaAuditoriaProps> {
     return (
 
-      <div id="divConteudo">
+      <><div id="divCarregando" >
 
-        <label htmlFor="dllAno">Ano de eleição:</label>
-        <select className="form-control" id="dllAno" style={{ "width": "150px" }}>
-        </select>
-
-        <br /><br />
-
-        <div id='divConteudo' className="container-fluid border" style={{ "width": "800px" }}>
-
-        <br /><h3><b>Eleição <span id='txtAno'></span> - Filial <span id='txtFilial'></span></b></h3><br />
-
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Funcionário</th>
-              <th scope="col">Cargo</th>
-              <th scope="col">Setor</th>
-              <th scope="col">Votou?</th>
-              <th scope="col">Data do voto</th>
-            </tr>
-          </thead>
-          <tbody id="divResultados">
-          </tbody>
-        </table>
-
-        </div>
+        <p>Carregando! Aguarde.....</p>
 
       </div>
+
+        <div id="divConteudo" style={{ "display": "none" }}>
+
+          <label htmlFor="dllAno">Ano de eleição:</label>
+          <select className="form-control" id="dllAno" style={{ "width": "150px" }}>
+          </select>
+
+          <br /><br />
+
+          <div id='divConteudo' className="container-fluid border" style={{ "width": "800px" }}>
+
+            <br /><h3><b>Eleição <span id='txtAno'></span> - Filial <span id='txtFilial'></span></b></h3><br />
+
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Funcionário</th>
+                  <th scope="col">Cargo</th>
+                  <th scope="col">Setor</th>
+                  <th scope="col">Votou?</th>
+                  <th scope="col">Data do voto</th>
+                </tr>
+              </thead>
+              <tbody id="divResultados">
+              </tbody>
+            </table>
+
+          </div>
+
+        </div></>
 
     );
   }
@@ -233,13 +243,17 @@ export default class VotacaoCipaAuditoria extends React.Component<IVotacaoCipaAu
 
   private montaResultado() {
 
+
+    $("#divCarregando").css("display", "block");
+    $("#divConteudo").css("display", "none");
+
+
     jQuery("#divResultados").empty();
 
     _anoVotacaoBusca = $("#dllAno option:checked").val();
 
     jQuery("#txtAno").html(_anoVotacaoBusca);
     jQuery("#txtFilial").html(_filial);
-
 
     jQuery.ajax({
       url: `${_url}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title,DescricaoCargo,Setor&$filter=Ano eq '${_anoVotacaoBusca}'`,
@@ -290,12 +304,16 @@ export default class VotacaoCipaAuditoria extends React.Component<IVotacaoCipaAu
 
                 jQuery("#divResultados").append(montaTabelaMeio);
 
+                jQuery("#divCarregando").css("display", "none");
+                jQuery("#divConteudo").css("display", "block");
+
+
               },
               error: function (jqXHR, textStatus, errorThrown) {
               }
             });
 
-         }
+          }
 
         } else {
           alert("Nenhum funcionário encontrado!");

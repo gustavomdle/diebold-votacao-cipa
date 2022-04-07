@@ -113,7 +113,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
               },
               error: function (jqXHR, textStatus, errorThrown) {
-                console.log("Erro em get Candidatos: " + textStatus)
+                console.log("Erro em get Candidatos: " + textStatus);
               }
             });
 
@@ -140,7 +140,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Erro em get Candidatos: " + textStatus)
+        console.log("Erro em get Candidatos: " + textStatus);
       }
     });
 
@@ -158,7 +158,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Erro em get Candidatos: " + textStatus)
+        console.log("Erro em get Candidatos: " + textStatus);
       }
     });
 
@@ -279,7 +279,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
               },
               error: function (jqXHR, textStatus, errorThrown) {
-                console.log("Erro em get Candidatos: " + textStatus)
+                console.log("Erro em get Candidatos: " + textStatus);
               }
             });
 
@@ -306,7 +306,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Erro em get Candidatos: " + textStatus)
+        console.log("Erro em get Candidatos: " + textStatus);
       }
     });
 
@@ -324,7 +324,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Erro em get Candidatos: " + textStatus)
+        console.log("Erro em get Candidatos: " + textStatus);
       }
     });
 

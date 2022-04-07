@@ -157,8 +157,9 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
       }
     });
 
-    this.verificaHorario();
     this.verificaConfiguracoes();
+    this.verificaHorario();
+    
 
   }
 
@@ -511,8 +512,12 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
   private getCandidatos() {
 
+    var url = `${this.props.siteurl}/_api/web/lists/getbytitle('Candidatos')/items?$select=ID,Title,Setor,Foto&$filter=Ano eq '${_anoVotacao}'`;
+
+    console.log("url-candidatos",url);
+
     jQuery.ajax({
-      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Candidatos')/items?$select=ID,Title,Setor,Foto&$filter=Ano eq '${_anoVotacao}`,
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Candidatos')/items?$select=ID,Title,Setor,Foto&$filter=Ano eq '${_anoVotacao}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
