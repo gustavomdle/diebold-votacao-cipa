@@ -13,6 +13,7 @@ var _nomeFuncionario;
 var _eleitor;
 var _cargo;
 var _setor;
+var _emailFuncionario;
 
 
 require("../../../../node_modules/bootstrap/dist/css/bootstrap.min.css");
@@ -256,7 +257,7 @@ export default class VotacaoCipaAuditoria extends React.Component<IVotacaoCipaAu
     jQuery("#txtFilial").html(_filial);
 
     jQuery.ajax({
-      url: `${_url}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title,DescricaoCargo,Setor&$filter=Ano eq '${_anoVotacaoBusca}'`,
+      url: `${_url}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title,DescricaoCargo,Setor,Email&$filter=Ano eq '${_anoVotacaoBusca}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -267,11 +268,12 @@ export default class VotacaoCipaAuditoria extends React.Component<IVotacaoCipaAu
           for (var i = 0; i < resultData.d.results.length; i++) {
 
             _nomeFuncionario = resultData.d.results[i].Title;
+            _emailFuncionario = resultData.d.results[i].Email;
             _cargo = resultData.d.results[i].DescricaoCargo;
             _setor = resultData.d.results[i].Setor;
 
             jQuery.ajax({
-              url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title,V_x00e1_lido,Created&$filter=Eleitor eq '${_nomeFuncionario}' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacaoBusca}'`,
+              url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title,V_x00e1_lido,Created&$filter=Email eq '${_emailFuncionario}' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacaoBusca}'`,
               type: "GET",
               async: false,
               headers: { 'Accept': 'application/json; odata=verbose;' },

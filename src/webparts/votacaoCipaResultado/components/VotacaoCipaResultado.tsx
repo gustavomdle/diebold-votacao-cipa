@@ -53,6 +53,8 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Erro em get ConfiguracaoGeral: " + textStatus);
+
       }
     });
 
@@ -79,6 +81,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Erro em get ConfiguracaoGeral: " + textStatus);
       }
     });
 
@@ -101,7 +104,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
             console.log();
 
             jQuery.ajax({
-              url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq '${candidato}' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacao}'`,
+              url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq '${candidato}' and Ano eq '${_anoVotacao}'`,
               type: "GET",
               async: false,
               headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -113,7 +116,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
               },
               error: function (jqXHR, textStatus, errorThrown) {
-                console.log("Erro em get Candidatos: " + textStatus);
+                console.log("Erro em get Votos: " + textStatus);
               }
             });
 
@@ -128,7 +131,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
 
     jQuery.ajax({
-      url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq 'Voto em branco' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacao}'`,
+      url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq 'Voto em branco' and Ano eq '${_anoVotacao}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -140,13 +143,13 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Erro em get Candidatos: " + textStatus);
+        console.log("Erro em get Votos: " + textStatus);
       }
     });
 
 
     jQuery.ajax({
-      url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq 'Voto nulo' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacao}'`,
+      url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq 'Voto nulo' and Ano eq '${_anoVotacao}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -158,7 +161,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Erro em get Candidatos: " + textStatus);
+        console.log("Erro em get Votos: " + textStatus);
       }
     });
 
@@ -198,6 +201,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Erro em get Votos: " + textStatus);
       }
     });
 
@@ -267,7 +271,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
             console.log();
 
             jQuery.ajax({
-              url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq '${candidato}' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacaoBusca}'`,
+              url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq '${candidato}' and Ano eq '${_anoVotacaoBusca}'`,
               type: "GET",
               async: false,
               headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -279,7 +283,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
               },
               error: function (jqXHR, textStatus, errorThrown) {
-                console.log("Erro em get Candidatos: " + textStatus);
+                console.log("Erro em get Votos: " + textStatus);
               }
             });
 
@@ -289,12 +293,13 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Erro em get Candidatos: " + textStatus);
       }
     });
 
 
     jQuery.ajax({
-      url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq 'Voto em branco' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacaoBusca}'`,
+      url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq 'Voto em branco' and Ano eq '${_anoVotacaoBusca}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -306,13 +311,13 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Erro em get Candidatos: " + textStatus);
+        console.log("Erro em get Votos: " + textStatus);
       }
     });
 
 
     jQuery.ajax({
-      url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq 'Voto nulo' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacaoBusca}'`,
+      url: `${_url}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Title eq 'Voto nulo' and Ano eq '${_anoVotacaoBusca}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -324,7 +329,7 @@ export default class VotacaoCipaResultado extends React.Component<IVotacaoCipaRe
 
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Erro em get Candidatos: " + textStatus);
+        console.log("Erro em get Votos: " + textStatus);
       }
     });
 

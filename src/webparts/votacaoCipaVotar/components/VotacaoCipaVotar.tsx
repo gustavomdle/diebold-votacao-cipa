@@ -4,6 +4,8 @@ import { IVotacaoCipaVotarProps } from './IVotacaoCipaVotarProps';
 import * as jQuery from "jquery";
 import "bootstrap";
 import { escape } from '@microsoft/sp-lodash-subset';
+import pnp from 'sp-pnp-js';
+
 
 import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
 import { allowOverscrollOnElement } from 'office-ui-fabric-react';
@@ -31,6 +33,9 @@ var _anoVotacao;
 var _dataApuracao;
 var _emailContato;
 var _telContato;
+var _web;
+var _userName;
+var _userEmail;
 
 export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarProps, IControlsState> {
 
@@ -40,6 +45,24 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
   }
 
   public async componentDidMount() {
+
+
+    _web = new Web(this.props.context.pageContext.web.absoluteUrl);
+
+
+    _web.currentUser.get().then(f => {
+
+      console.log("f", f);
+      _userName = f.Title;
+      _userEmail = f.Email;
+
+      console.log("_userName", _userName);
+      console.log("_userEmail", _userEmail);
+
+      jQuery("#txtUserName").html(_userName);
+
+
+    });
 
     document
       .getElementById("btnVotar")
@@ -64,6 +87,11 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
     document
       .getElementById("btnValidaSeVotou")
       .addEventListener("click", (e: Event) => this.redirecionar());
+
+    document
+      .getElementById("btnValidaSeExiste")
+      .addEventListener("click", (e: Event) => this.redirecionar());
+
 
     document
       .getElementById("btnConfirmarVoto")
@@ -159,35 +187,20 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
     this.verificaConfiguracoes();
     this.verificaHorario();
-    
+
 
   }
-
 
 
   public render(): React.ReactElement<IVotacaoCipaVotarProps> {
     return (
 
-
       <><div id="conteudoVotacao">
 
-
         <div className="form-group">
-
-          <label htmlFor="lbtxtEleitor">Meu nome é:</label>
-
-          <ListItemPicker listId={this.props.listId}
-            columnInternalName='Title'
-            keyColumnInternalName='Id'
-            itemLimit={1}
-            onSelectedItem={this.onSelectedItem}
-            context={this.props.context as any}
-          />
+          <h3 className='text-info'>Meu nome é <b><span id='txtUserName'></span></b><br></br>e meu voto vai para:</h3>
           <br></br>
-
-          <label htmlFor="exampleInputEmail1">Meu voto vai para:</label>
         </div>
-
 
         <div id="divCandidatos">
 
@@ -246,8 +259,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
               </div>
               <div className="modal-body">
                 <br />
-                Confirmo que meu nome é <b><span id="lblEleitor1"></span></b>.<br />
-                E meu voto vai para <b><span id="lblCandidato"></span></b>.
+                Deseja realmente votar no candidato <b><span id="lblCandidato"></span></b>?
                 <br /><br />
               </div>
               <div className="modal-footer">
@@ -266,8 +278,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
               </div>
               <div className="modal-body">
                 <br />
-                Confirmo que meu nome é <b><span id="lblEleitor2"></span></b>.<br />
-                E meu voto é <b><span>em branco</span></b>.
+                Deseja realmente votar <b>EM BRANCO</b>?
                 <br /><br />
               </div>
               <div className="modal-footer">
@@ -278,7 +289,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
           </div>
         </div>
 
-
         <div className="modal fade" id="modalVotarNulo" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div className="modal-dialog" role="document">
             <div className="modal-content">
@@ -287,8 +297,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
               </div>
               <div className="modal-body">
                 <br />
-                Confirmo que meu nome é <b><span id="lblEleitor3"></span></b>.<br />
-                E meu voto é <b><span>nulo</span></b>.
+                Deseja realmente <b>ANULAR O VOTO</b>?
                 <br /><br />
               </div>
               <div className="modal-footer">
@@ -298,24 +307,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
             </div>
           </div>
         </div>
-
-
-        <div className="modal fade" id="modalvalidaEleitor" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">Confirmação</h5>
-              </div>
-              <div className="modal-body">
-                Nome não encontrado! Preencha corretamente seu nome.
-              </div>
-              <div className="modal-footer">
-                <button type="button" id='btnValidaEleitor' className="btn btn-primary" data-dismiss="modal" >Ok</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
 
         <div className="modal fade" id="modalvalidaSeJaVotou" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div className="modal-dialog" role="document">
@@ -332,6 +323,26 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
             </div>
           </div>
         </div>
+
+        <div className="modal fade" id="modalvalidaSeExiste" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">Confirmação</h5>
+              </div>
+              <div className="modal-body">
+                Eleitor não cadastrado! favor entrar em contato com <b><span id='txtEmailContato2'></span></b> ou no telefone <b><span id='txtTelContato2'></span></b> (WhatsApp)!
+              </div>
+              <div className="modal-footer">
+                <button type="button" id='btnValidaSeExiste' className="btn btn-primary" data-dismiss="modal">Ok</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
 
         <div className="modal fade" id="modalvalidaCandidado" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div className="modal-dialog" role="document">
@@ -404,7 +415,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
             var dataApuracao = resultData.d.results[i].Valor;
             jQuery("#txtDataApuracao").html(dataApuracao);
-            console.log("dataApuracao",dataApuracao);
+            console.log("dataApuracao", dataApuracao);
 
           }
 
@@ -431,6 +442,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
             var emailContato = resultData.d.results[i].Valor;
             jQuery("#txtEmailContato").html(emailContato);
+            jQuery("#txtEmailContato2").html(emailContato);
             console.log("emailContato", emailContato);
 
           }
@@ -458,6 +470,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
             var telContato = resultData.d.results[i].Valor;
             jQuery("#txtTelContato").html(telContato);
+            jQuery("#txtTelContato2").html(telContato);
             console.log("telContato", telContato);
 
           }
@@ -512,10 +525,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
   private getCandidatos() {
 
-    var url = `${this.props.siteurl}/_api/web/lists/getbytitle('Candidatos')/items?$select=ID,Title,Setor,Foto&$filter=Ano eq '${_anoVotacao}'`;
-
-    console.log("url-candidatos",url);
-
     jQuery.ajax({
       url: `${this.props.siteurl}/_api/web/lists/getbytitle('Candidatos')/items?$select=ID,Title,Setor,Foto&$filter=Ano eq '${_anoVotacao}'`,
       type: "GET",
@@ -555,12 +564,31 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
   private preencheInformacoesConfirmacao(opcao) {
 
     var candidato;
-    var eleitor = _nomeEleitor;
+    var eleitor = _userName;
 
     console.log("eleitor", eleitor);
 
     jQuery.ajax({
-      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Eleitor eq '${eleitor}' and V_x00e1_lido eq 1 and Ano eq '${_anoVotacao}'`,
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter=Email eq '${_userEmail}'`,
+      type: "GET",
+      async: false,
+      headers: { 'Accept': 'application/json; odata=verbose;' },
+      success: function (resultData) {
+
+        if (resultData.d.results.length == 0) {
+
+          jQuery('#modalvalidaSeExiste').modal({ backdrop: 'static', keyboard: false });
+          return false;
+
+        }
+
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+      }
+    });
+
+    jQuery.ajax({
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Email eq '${_userEmail}' and Ano eq '${_anoVotacao}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -579,12 +607,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
             if (candidato == undefined) {
               jQuery('#modalvalidaCandidado').modal({ backdrop: 'static', keyboard: false });
               //alert("Favor escolher seu candidado!");
-              return false;
-            }
-
-            if (eleitor == "") {
-              jQuery('#modalvalidaEleitor').modal({ backdrop: 'static', keyboard: false });
-              //alert("Favor informar seu nome!");
               return false;
             }
 
@@ -620,7 +642,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
     console.log("opcao", opcao);
     var candidato;
-    var eleitor = _nomeEleitor;
+    var eleitor = _userName;
 
     if (opcao == "Votar") {
       candidato = $('input[name="candidato"]:checked').val();
@@ -633,16 +655,85 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
     }
 
 
+    jQuery.ajax({
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('ConfiguracaoGeral')/items?$select=ID,Title,Valor&$filter= Title eq 'AnoVotacao'`,
+      type: "GET",
+      async: false,
+      headers: { 'Accept': 'application/json; odata=verbose;' },
+      success: function (resultData) {
+
+        if (resultData.d.results.length > 0) {
+
+          for (var i = 0; i < resultData.d.results.length; i++) {
+
+            _anoVotacao = resultData.d.results[i].Valor;
+            console.log("_anoVotacao", _anoVotacao);
+
+          }
+
+        } else {
+          alert("Ano de votação não configurado. Contate o adminstrador!");
+          return false;
+        }
+
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+      }
+    });
+
+
+
     _web.lists
       .getByTitle("Votos")
       .items.add({
         Title: candidato,
         Eleitor: eleitor,
+        Email: _userEmail,
         Ano: _anoVotacao
       })
       .then(response => {
-        console.log("Gravou...");
-        jQuery('#modalConfirmacaoVoto').modal({ backdrop: 'static', keyboard: false });
+
+        jQuery.ajax({
+          url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter= Email eq '${_userEmail}' and Ano eq '${_anoVotacao}'`,
+          type: "GET",
+          async: false,
+          headers: { 'Accept': 'application/json; odata=verbose;' },
+          success: async function (resultData) {
+
+            if (resultData.d.results.length > 0) {
+
+              var strHoraVoto = (_today).toLocaleString("pt");
+
+              for (var i = 0; i < resultData.d.results.length; i++) {
+
+                var id = resultData.d.results[i].ID;
+                const list = _web.lists.getByTitle("Funcionarios");
+
+                await list.items.getById(id).update({
+                  Votou: true,
+                  HoraVotacao: strHoraVoto
+
+                }).then(response => {
+
+                  console.log("Gravou...");
+                  jQuery('#modalConfirmacaoVoto').modal({ backdrop: 'static', keyboard: false });
+
+                }).catch((error: any) => {
+                  console.log("Erro em update: ", error);
+                });
+
+
+
+              }
+
+            }
+
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+          }
+        });
+
+
       });
 
 
