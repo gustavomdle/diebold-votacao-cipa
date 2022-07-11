@@ -5329,3 +5329,4 @@ node_modules/@fluentui/react-icons-northstar/dist/commonjs/utils/types.js.map
 node_modules/@fluentui/react-icons-northstar/dist/dts/tsconfig.tsbuildinfo
 node_modules/@fluentui/react-icons-northstar/dist/dts/src/index.d.ts
 node_modules/@fluentui/react-icons-northstar/dist/dts/src/index.js
+*.scss.d.ts

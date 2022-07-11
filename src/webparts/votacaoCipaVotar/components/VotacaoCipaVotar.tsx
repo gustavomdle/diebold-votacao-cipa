@@ -36,6 +36,7 @@ var _telContato;
 var _web;
 var _userName;
 var _userEmail;
+var _votou = false;
 
 export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarProps, IControlsState> {
 
@@ -638,7 +639,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
   }
 
-  private registrarVoto(opcao) {
+  private async registrarVoto(opcao) {
 
     console.log("opcao", opcao);
     var candidato;
@@ -681,60 +682,68 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
       }
     });
 
+    console.log("_votou",_votou);
+
+    if (!_votou) {
+
+      _votou = true;
+
+      await _web.lists
+        .getByTitle("Votos")
+        .items.add({
+          Title: candidato,
+          Eleitor: eleitor,
+          Email: _userEmail,
+          Ano: _anoVotacao
+        })
+        .then(response => {
+
+          jQuery.ajax({
+            url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter= Email eq '${_userEmail}' and Ano eq '${_anoVotacao}'`,
+            type: "GET",
+            async: false,
+            headers: { 'Accept': 'application/json; odata=verbose;' },
+            success: async function (resultData) {
+
+              if (resultData.d.results.length > 0) {
+
+                var strHoraVoto = (_today).toLocaleString("pt");
+
+                for (var i = 0; i < resultData.d.results.length; i++) {
+
+                  var id = resultData.d.results[i].ID;
+                  const list = _web.lists.getByTitle("Funcionarios");
+
+                  await list.items.getById(id).update({
+                    Votou: true,
+                    HoraVotacao: strHoraVoto
+
+                  }).then(response => {
+
+                    console.log("Gravou...");
+                    jQuery('#modalConfirmacaoVoto').modal({ backdrop: 'static', keyboard: false });
+
+                  }).catch((error: any) => {
+                    console.log("Erro em update: ", error);
+                  });
 
 
-    _web.lists
-      .getByTitle("Votos")
-      .items.add({
-        Title: candidato,
-        Eleitor: eleitor,
-        Email: _userEmail,
-        Ano: _anoVotacao
-      })
-      .then(response => {
 
-        jQuery.ajax({
-          url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter= Email eq '${_userEmail}' and Ano eq '${_anoVotacao}'`,
-          type: "GET",
-          async: false,
-          headers: { 'Accept': 'application/json; odata=verbose;' },
-          success: async function (resultData) {
-
-            if (resultData.d.results.length > 0) {
-
-              var strHoraVoto = (_today).toLocaleString("pt");
-
-              for (var i = 0; i < resultData.d.results.length; i++) {
-
-                var id = resultData.d.results[i].ID;
-                const list = _web.lists.getByTitle("Funcionarios");
-
-                await list.items.getById(id).update({
-                  Votou: true,
-                  HoraVotacao: strHoraVoto
-
-                }).then(response => {
-
-                  console.log("Gravou...");
-                  jQuery('#modalConfirmacaoVoto').modal({ backdrop: 'static', keyboard: false });
-
-                }).catch((error: any) => {
-                  console.log("Erro em update: ", error);
-                });
-
-
+                }
 
               }
 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
             }
+          });
 
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-          }
+
         });
 
+    }
 
-      });
+
 
 
   }
