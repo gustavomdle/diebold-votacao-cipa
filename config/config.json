@@ -25,6 +25,14 @@
           "manifest": "./src/webparts/votacaoCipaAuditoria/VotacaoCipaAuditoriaWebPart.manifest.json"
         }
       ]
+    },
+    "votacao-cipa-votar-fabrica-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/votacaoCipaVotarFabrica/VotacaoCipaVotarFabricaWebPart.js",
+          "manifest": "./src/webparts/votacaoCipaVotarFabrica/VotacaoCipaVotarFabricaWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -32,6 +40,7 @@
     "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
     "VotacaoCipaVotarWebPartStrings": "lib/webparts/votacaoCipaVotar/loc/{locale}.js",
     "VotacaoCipaResultadoWebPartStrings": "lib/webparts/votacaoCipaResultado/loc/{locale}.js",
-    "VotacaoCipaAuditoriaWebPartStrings": "lib/webparts/votacaoCipaAuditoria/loc/{locale}.js"
+    "VotacaoCipaAuditoriaWebPartStrings": "lib/webparts/votacaoCipaAuditoria/loc/{locale}.js",
+    "VotacaoCipaVotarFabricaWebPartStrings": "lib/webparts/votacaoCipaVotarFabrica/loc/{locale}.js"
   }
 }

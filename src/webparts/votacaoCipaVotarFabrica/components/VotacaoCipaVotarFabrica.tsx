@@ -1,6 +1,6 @@
 import * as React from 'react';
-import styles from './VotacaoCipaVotar.module.scss';
-import { IVotacaoCipaVotarProps } from './IVotacaoCipaVotarProps';
+import styles from './VotacaoCipaVotarFabrica.module.scss';
+import { IVotacaoCipaVotarFabricaProps } from './IVotacaoCipaVotarFabricaProps';
 import * as jQuery from "jquery";
 import "bootstrap";
 import { escape } from '@microsoft/sp-lodash-subset';
@@ -34,15 +34,14 @@ var _dataApuracao;
 var _emailContato;
 var _telContato;
 var _web;
-var _userNameEncodeURIComponent;
-var _userEmailencodeURIComponent;
 var _userName;
 var _userEmail;
 var _votou = false;
+var _eleitor;
 
-export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarProps, IControlsState> {
+export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarFabricaProps, IControlsState> {
 
-  constructor(props: IVotacaoCipaVotarProps, state: IControlsState) {
+  constructor(props: IVotacaoCipaVotarFabricaProps, state: IControlsState) {
     super(props);
     this.state = { selectedValues: [] };
   }
@@ -56,31 +55,8 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
     _web.currentUser.get().then(f => {
 
       console.log("f", f);
-      // _userName = f.Title;
-      // _userEmail = f.Email;
-
-      var userName = f.Title;
-      var userEmail = f.Email;
-
-      //var userName = "Assuncao, N'Dsau P.";
-      //var userEmail = "N'Dsau.Assuncao@dieboldnixdorf.com";
-
-      _userNameEncodeURIComponent = encodeURIComponent(userName).replace(/[']/g, '%27%27');
-      _userEmailencodeURIComponent = encodeURIComponent(userEmail).replace(/[']/g, '%27%27');
-      _userName = userName;
-      _userEmail = userEmail;
-
-      // _userName = "Assuncao, N'Dsau P.";
-      // _userEmail = "N'Dsau.Assuncao@dieboldnixdorf.com";
-
-
-      console.log("_userName", _userName);
-      console.log("_userEmail", _userEmail);
-      console.log("_userNameEncodeURIComponent", _userNameEncodeURIComponent);
-      console.log("_userEmailencodeURIComponent", _userEmailencodeURIComponent);
-
-      jQuery("#txtUserName").html(_userName);
-
+      //_userName = f.Title;
+      //_userEmail = f.Email;
 
     });
 
@@ -97,6 +73,10 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
       .addEventListener("click", (e: Event) => this.preencheInformacoesConfirmacao("Nulo"));
 
     document
+      .getElementById("btnBuscarMatricula")
+      .addEventListener("click", (e: Event) => this.buscarMatricula());
+
+    document
       .getElementById("ckConfirmar")
       .addEventListener("change", (e: Event) => this.ckConfirmar());
 
@@ -108,10 +88,11 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
       .getElementById("btnValidaSeVotou")
       .addEventListener("click", (e: Event) => this.redirecionar());
 
-    document
-      .getElementById("btnValidaSeExiste")
-      .addEventListener("click", (e: Event) => this.redirecionar());
-
+    /*
+  document
+    .getElementById("btnValidaSeExiste")
+    .addEventListener("click", (e: Event) => this.redirecionar());
+*/
 
     document
       .getElementById("btnConfirmarVoto")
@@ -130,7 +111,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
     jQuery('#btnVotarBranco').prop("disabled", true);
     jQuery('#btnVotarNulo').prop("disabled", true);
 
-    jQuery("#conteudoVotacao").hide();
     jQuery("#divForaHorario").hide();
 
     _web = new Web(this.props.context.pageContext.web.absoluteUrl);
@@ -212,40 +192,74 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
   }
 
 
-  public render(): React.ReactElement<IVotacaoCipaVotarProps> {
+  public render(): React.ReactElement<IVotacaoCipaVotarFabricaProps> {
     return (
 
-      <><div id="conteudoVotacao">
+      <><div id="conteudoVotacao" style={{ "width": "680px" }}>
 
         <div className="form-group">
+
+          <h3 className='text-info'>Minha matrícula</h3>
+
+          <div className="form-row">
+            <div className="form-group col-md-3">
+              <input type="number" style={{ "width": "160px" }} className="form-control" id="txtMatricula" />
+            </div>
+            <div className="form-group col-md-3">
+              <input type="button" className="btn btn-light" id="btnBuscarMatricula" value="Buscar" alt="Buscar" />
+            </div>
+          </div>
+
+        </div>
+
+        <div id="divInfoFuncionario" style={{ "display": "none" }}>
+
           <h3 className='text-info'>Meu nome é <b><span id='txtUserName'></span></b><br></br>e meu voto vai para:</h3>
           <br></br>
-        </div>
-
-        <div id="divCandidatos">
 
         </div>
 
-        <div className="form-check">
-          <input type="checkbox" className="form-check-input" id="ckConfirmar" />
-          <label className="form-check-label" htmlFor="exampleCheck1">Confirmo que estou votando em meu nome.</label>
+        <div id="divCandidatos" style={{ "display": "none" }}>
+
         </div>
 
-        <br></br>
+        <div id='divAcoes' style={{ "display": "none" }}>
 
-        <button type="button" id="btnVotarBranco"
-          className="btn btn-warning" data-toggle="button" aria-pressed="false" data-autocomplete="off">
-          Votar em Branco
-        </button>
-        <button type="button" id="btnVotarNulo" className="btn btn-warning"
-          data-toggle="button" aria-pressed="false" data-autocomplete="off" >
-          Votar Nulo
-        </button>
-        <button type="button" id="btnVotar" className="btn btn-success">
-          Votar
-        </button>
+          <br></br>
 
-      </div><div id="divForaHorario">
+
+
+          <label className='font-weight:normal checkcontainer'>
+            <div className='width:600px;'>
+              <div className='float:right; width:480px'><h3 className='text-info'>Confirmo para fins de 'auditoria e/ou fiscalização que estou votando em meu nome.</h3></div></div>
+            <input type='checkbox' name='candidato' value='teste' id="ckConfirmar" />
+            <span className='checkmark'></span>
+          </label >
+
+
+
+
+
+          <br></br>
+
+          <button type="button" id="btnVotarBranco"
+            className="btn btn-warning" data-toggle="button" aria-pressed="false" data-autocomplete="off">
+            Votar em Branco
+          </button>
+          <button type="button" id="btnVotarNulo" className="btn btn-warning"
+            data-toggle="button" aria-pressed="false" data-autocomplete="off" >
+            Votar Nulo
+          </button>
+          <button type="button" id="btnVotar" className="btn btn-success">
+            Votar
+          </button>
+
+        </div>
+
+      </div>
+
+
+        <div id="divForaHorario">
 
           <h1>Votação fora do horário!</h1>
 
@@ -335,7 +349,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
                 <h5 className="modal-title" id="exampleModalLabel">Confirmação</h5>
               </div>
               <div className="modal-body">
-                Você já votou! Caso você ache que esteja incorreto, favor entrar em contato com <b><span id='txtEmailContato'></span></b> ou no telefone <b><span id='txtTelContato'></span></b> (WhatsApp)!
+                Você já votou! Caso você ache que esteja incorreto, favor entrar em contato com <b><span id='txtEmailContato'></span></b> ou no telefone <b><span id='txtTelContato'></span></b>!
               </div>
               <div className="modal-footer">
                 <button type="button" id='btnValidaSeVotou' className="btn btn-primary" data-dismiss="modal">Ok</button>
@@ -359,10 +373,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
             </div>
           </div>
         </div>
-
-
-
-
 
         <div className="modal fade" id="modalvalidaCandidado" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div className="modal-dialog" role="document">
@@ -588,8 +598,10 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
     console.log("eleitor", eleitor);
 
+    /*
+
     jQuery.ajax({
-      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter=Email eq '${_userEmailencodeURIComponent}'`,
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter=Email eq '${_userEmail}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -607,8 +619,10 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
       }
     });
 
+    */
+
     jQuery.ajax({
-      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Email eq '${_userEmailencodeURIComponent}' and Ano eq '${_anoVotacao}'`,
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Email eq '${_userEmail}' and Ano eq '${_anoVotacao}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -662,7 +676,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
 
     console.log("opcao", opcao);
     var candidato;
-    var eleitor = _userName;
+    var eleitor = _eleitor;
 
     if (opcao == "Votar") {
       candidato = $('input[name="candidato"]:checked').val();
@@ -718,7 +732,7 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
         .then(response => {
 
           jQuery.ajax({
-            url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter= Email eq '${_userEmailencodeURIComponent}' and Ano eq '${_anoVotacao}'`,
+            url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter= Email eq '${_userEmail}' and Ano eq '${_anoVotacao}'`,
             type: "GET",
             async: false,
             headers: { 'Accept': 'application/json; odata=verbose;' },
@@ -788,6 +802,63 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
       console.log(_nomeEleitor);
     }
   }
+
+
+  private buscarMatricula() {
+
+    $("#divInfoFuncionario").css("display", "none");
+    $("#divCandidatos").css("display", "none");
+    $("#divAcoes").css("display", "none");
+    $("#txtUserName").empty();
+
+    _userEmail = "";
+    _eleitor = "";
+
+    var matricula = jQuery("#txtMatricula").val();
+
+    console.log("matricula", matricula);
+
+
+    jQuery.ajax({
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title,Email&$filter= Matricula eq '${matricula}' and Ano eq '${_anoVotacao}'`,
+      type: "GET",
+      async: false,
+      headers: { 'Accept': 'application/json; odata=verbose;' },
+      success: async function (resultData) {
+
+        if (resultData.d.results.length > 0) {
+
+          for (var i = 0; i < resultData.d.results.length; i++) {
+
+            var nome = resultData.d.results[i].Title;
+            _eleitor = nome;
+
+            _userEmail = resultData.d.results[i].Email;
+            _eleitor
+
+            console.log("nome", nome);
+
+            jQuery("#txtUserName").html(nome);
+
+            $("#divInfoFuncionario").css("display", "block");
+            $("#divCandidatos").css("display", "block");
+            $("#divAcoes").css("display", "block");
+
+          }
+
+        } else {
+          jQuery('#modalvalidaSeExiste').modal({ backdrop: 'static', keyboard: false });
+          return false;
+        }
+
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+      }
+    });
+
+
+  }
+
 
 
 
