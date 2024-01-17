@@ -589,61 +589,67 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
     console.log("eleitor", eleitor);
 
     jQuery.ajax({
-      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter=Email eq '${_userEmailencodeURIComponent}'`,
+      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Funcionarios')/items?$select=ID,Title&$filter=Email eq '${_userEmailencodeURIComponent}' and Ano eq '${_anoVotacao}'`,
       type: "GET",
       async: false,
       headers: { 'Accept': 'application/json; odata=verbose;' },
-      success: function (resultData) {
+      success: async (resultData) => {
 
         if (resultData.d.results.length == 0) {
 
           jQuery('#modalvalidaSeExiste').modal({ backdrop: 'static', keyboard: false });
           return false;
 
-        }
-
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-      }
-    });
-
-    jQuery.ajax({
-      url: `${this.props.siteurl}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Email eq '${_userEmailencodeURIComponent}' and Ano eq '${_anoVotacao}'`,
-      type: "GET",
-      async: false,
-      headers: { 'Accept': 'application/json; odata=verbose;' },
-      success: function (resultData) {
-
-        if (resultData.d.results.length > 0) {
-
-          jQuery('#modalvalidaSeJaVotou').modal({ backdrop: 'static', keyboard: false });
-
         } else {
 
-          if (opcao == "Votar") {
 
-            candidato = jQuery('input[name="candidato"]:checked').val();
-
-            if (candidato == undefined) {
-              jQuery('#modalvalidaCandidado').modal({ backdrop: 'static', keyboard: false });
-              //alert("Favor escolher seu candidado!");
-              return false;
+          jQuery.ajax({
+            url: `${this.props.siteurl}/_api/web/lists/getbytitle('Votos')/items?$select=ID,Title&$filter=Email eq '${_userEmailencodeURIComponent}' and Ano eq '${_anoVotacao}'`,
+            type: "GET",
+            async: false,
+            headers: { 'Accept': 'application/json; odata=verbose;' },
+            success: function (resultData) {
+      
+              if (resultData.d.results.length > 0) {
+      
+                jQuery('#modalvalidaSeJaVotou').modal({ backdrop: 'static', keyboard: false });
+      
+              } else {
+      
+                if (opcao == "Votar") {
+      
+                  candidato = jQuery('input[name="candidato"]:checked').val();
+      
+                  if (candidato == undefined) {
+                    jQuery('#modalvalidaCandidado').modal({ backdrop: 'static', keyboard: false });
+                    //alert("Favor escolher seu candidado!");
+                    return false;
+                  }
+      
+                }
+      
+                else if (opcao == "Branco") candidato = "EM BRANCO";
+                else if (opcao == "Nulo") candidato = "NULO";
+      
+                jQuery("#lblCandidato").html(`${candidato}`);
+                jQuery("#lblEleitor1").html(`${eleitor}`);
+                jQuery("#lblEleitor2").html(`${eleitor}`);
+                jQuery("#lblEleitor3").html(`${eleitor}`);
+      
+      
+                if (opcao == "Votar") jQuery("#modalVotar").modal({ backdrop: 'static', keyboard: false });
+                else if (opcao == "Branco") jQuery("#modalVotarBranco").modal({ backdrop: 'static', keyboard: false });
+                else if (opcao == "Nulo") jQuery("#modalVotarNulo").modal({ backdrop: 'static', keyboard: false });
+      
+      
+              }
+      
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
             }
-
-          }
-
-          else if (opcao == "Branco") candidato = "EM BRANCO";
-          else if (opcao == "Nulo") candidato = "NULO";
-
-          jQuery("#lblCandidato").html(`${candidato}`);
-          jQuery("#lblEleitor1").html(`${eleitor}`);
-          jQuery("#lblEleitor2").html(`${eleitor}`);
-          jQuery("#lblEleitor3").html(`${eleitor}`);
+          });
 
 
-          if (opcao == "Votar") jQuery("#modalVotar").modal({ backdrop: 'static', keyboard: false });
-          else if (opcao == "Branco") jQuery("#modalVotarBranco").modal({ backdrop: 'static', keyboard: false });
-          else if (opcao == "Nulo") jQuery("#modalVotarNulo").modal({ backdrop: 'static', keyboard: false });
 
 
         }
@@ -652,8 +658,6 @@ export default class VotacaoCipaVotar extends React.Component<IVotacaoCipaVotarP
       error: function (jqXHR, textStatus, errorThrown) {
       }
     });
-
-
 
 
   }
